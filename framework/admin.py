@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+class BaseTabularInline(admin.TabularInline):
+    extra = 0
+    def get_queryset(self, request):
+        return super().get_queryset(request).actives()

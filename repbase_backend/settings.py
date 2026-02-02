@@ -38,10 +38,25 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_currentuser',
+    'django_filters',
     'rest_framework',
     'corsheaders',
-    'apps.animal'
+    'framework',
+    'apps.animal',
+    'apps.specie',
+    'apps.breeding',
+    'apps.feeding',
+    'apps.facility',
+    'apps.health',
+    'apps.member',
+    'apps.users',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -132,3 +147,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.CustomUser'
