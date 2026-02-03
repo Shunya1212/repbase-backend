@@ -4,6 +4,7 @@ from apps.specie import views
 
 
 router = DefaultRouter()
+router.register('specie', views.SpecieViewSet)
 router.register('growth-state', views.GrowthStateViewSet)
 
 
