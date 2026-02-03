@@ -35,7 +35,7 @@ class GrowthState(BaseModel):
         return self.state
 
     class Meta:
-        ordering = ['-created', '-updated']
+        ordering = ['sort_no', '-created', '-updated']
         verbose_name = 'Growth State'
         verbose_name_plural = 'Growth States'
 
