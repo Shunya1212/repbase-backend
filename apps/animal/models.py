@@ -38,6 +38,14 @@ class Animal(BaseModel):
     @property
     def is_dead(self):
         return self.dead_transaction is not None
+
+    @property
+    def father(self):
+        pass
+
+    @property
+    def mother(self):
+        pass
     
     @property
     def reproductive_availability(self):
