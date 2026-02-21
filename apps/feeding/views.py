@@ -7,3 +7,9 @@ class FoodViewSet(viewsets.ModelViewSet):
     queryset = models.Food.objects.actives()
     serializer_class = serializers.FoodSerializer
     filterset_class = filters.FoodFilter
+
+
+class FeedingPlanViewSet(viewsets.ModelViewSet):
+    queryset = models.FeedingPlan.objects.actives()
+    serializer_class = serializers.FeedingPlanSerializer
+    filterset_class = filters.FeedingPlanFilter

@@ -14,3 +14,9 @@ class FoodFilter(filters.FilterSet):
     class Meta:
         model = models.Food
         fields = ['type']
+
+
+class FeedingPlanFilter(filters.FilterSet):
+    class Meta:
+        model = models.FeedingPlan
+        fields = []

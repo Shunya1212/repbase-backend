@@ -11,3 +11,19 @@ class FoodFactory(DjangoModelFactory):
 
     class Meta:
         model = models.Food
+
+
+class FeedingPlanFactory(DjangoModelFactory):
+    name = factory.Faker('word')
+
+    class Meta:
+        model = models.FeedingPlan
+
+
+class FeedingPlanItemFactory(DjangoModelFactory):
+    food = factory.SubFactory(FoodFactory)
+    feeding_plan = factory.SubFactory(FeedingPlanFactory)
+    amount = factory.Faker('pyint', min_value=1, max_value=20)
+
+    class Meta:
+        model = models.FeedingPlanItem
