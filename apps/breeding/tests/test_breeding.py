@@ -46,11 +46,25 @@ class BreedingTestCase(BaseTestCase):
         created_id = response.data['id']
         pair = models.BreedingPair.objects.get(id=created_id)
         self.assertEqual(pair.code, 'test_code_001')
-        self.assertEqual(pair.male, Animal.Sex.MALE)
-        self.assertEqual(pair.female, Animal.Sex.FEMALE)
-        self.assertEqual(pair.paring_date, '2025-09-09')
+        self.assertEqual(pair.male, male)
+        self.assertEqual(pair.female, female)
+        self.assertEqual(str(pair.paring_date), '2025-09-09')
         self.assertEqual(pair.status, models.BreedingPair.BreedingResult.IN_PROGRESS)
         self.assertEqual(pair.note, 'test note')
+
+    def test_create_breeding_pair_with_both_male_should_return_error(self):
+        male = factories.AnimalFactory(sex=Animal.Sex.MALE)
+        male_2 = factories.AnimalFactory(sex=Animal.Sex.MALE)
+        response = self.client.post(reverse('breedingpair-list'), data={
+            'code': 'test_code_001',
+            'male': male.id,
+            'female': male_2.id,
+            'paring_date': '2025-09-09',
+            'status': models.BreedingPair.BreedingResult.IN_PROGRESS,
+            'note': 'test note',
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
 
     def test_update_breeding_pair_should_success(self):
         pair = factories.BreedingPairFactory()
@@ -68,9 +82,9 @@ class BreedingTestCase(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         pair.refresh_from_db()
         self.assertEqual(pair.code, 'test_code_001')
-        self.assertEqual(pair.male, Animal.Sex.MALE)
-        self.assertEqual(pair.female, Animal.Sex.FEMALE)
-        self.assertEqual(pair.paring_date, '2025-09-09')
+        self.assertEqual(pair.male, male)
+        self.assertEqual(pair.female, female)
+        self.assertEqual(str(pair.paring_date), '2025-09-09')
         self.assertEqual(pair.status, models.BreedingPair.BreedingResult.IN_PROGRESS)
         self.assertEqual(pair.note, 'test note')
 

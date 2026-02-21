@@ -1,4 +1,4 @@
-from django_filters import filters
+import django_filters as filters
 from apps.breeding import models
 
 
