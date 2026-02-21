@@ -9,4 +9,6 @@ router.register('animal', views.AnimalViewSet, basename='animal')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('size-log-transaction/', views.SizeLogTransactionView.as_view(), name='sizelog-list'),
+    path('dead-log-transaction/', views.DeadLogTransactionView.as_view(), name='deadlog-list'),
 ]

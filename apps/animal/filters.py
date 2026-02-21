@@ -14,3 +14,15 @@ class AnimalFilter(filters.FilterSet):
     class Meta:
         model = models.Animal
         fields = ['specie', 'sex', 'origin', 'egg', 'status', 'is_assist_feed_needed']
+
+
+class SizeLogTransactionFilter(filters.FilterSet):
+    class Meta:
+        model = models.SizeLogTransaction
+        fields = ['animal']
+
+
+class DeadLogTransactionFilter(filters.FilterSet):
+    class Meta:
+        model = models.DeadLogTransaction
+        fields = ['animal']
