@@ -10,6 +10,12 @@ class FoodViewSet(viewsets.ModelViewSet):
 
 
 class FeedingPlanViewSet(viewsets.ModelViewSet):
-    queryset = models.FeedingPlan.objects.actives()
+    queryset = models.FeedingPlan.objects.all().prefetch_related('items')
     serializer_class = serializers.FeedingPlanSerializer
     filterset_class = filters.FeedingPlanFilter
+
+    @action(detail=True, methods=["POST"])
+    def reactivate(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.reactivate()
+        return self.retrieve(request, *args, **kwargs)

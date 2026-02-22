@@ -38,6 +38,10 @@ class FeedingPlan(BaseModel):
 
     def __str__(self):
         return f"{self.name}"
+
+    def reactivate(self):
+        self.is_active = True
+        self.save()
     
     class Meta:
         ordering = ['-created', '-updated']

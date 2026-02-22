@@ -90,3 +90,11 @@ class FeedingPlanTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, response.data)
         self.assertFalse(models.FeedingPlan.objects.actives().filter(id=plan.id).exists())
+
+    def test_reactivate_feeding_plan_should_success(self):
+        plan = factories.FeedingPlanFactory(is_active=False)
+        self.assertFalse(plan.is_active)
+        response = self.client.post(reverse('feedingplan-reactivate', kwargs={'pk': plan.id}))
+        plan.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertTrue(plan.is_active)
