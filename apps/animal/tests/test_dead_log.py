@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from framework.tests import BaseTestCase
 from apps.animal import models, factories
 from apps.users.factories import UserFactory
+from apps.common import enums
 
 
 class DeadLogTransactionTestCase(BaseTestCase):
@@ -26,7 +27,7 @@ class DeadLogTransactionTestCase(BaseTestCase):
         response = self.client.post(reverse('deadlog-list'), data={
             'animal': animal.id,
             'date': '2025-09-09',
-            'cause': models.DeadLogTransaction.Cause.OLD_AGE,
+            'cause': enums.Cause.OLD_AGE,
             'note': 'test note',
         })
 
@@ -35,5 +36,5 @@ class DeadLogTransactionTestCase(BaseTestCase):
         log = models.DeadLogTransaction.objects.get(id=created_id)
         self.assertEqual(log.animal, animal)
         self.assertEqual(str(log.date), '2025-09-09')
-        self.assertEqual(log.cause, models.DeadLogTransaction.Cause.OLD_AGE)
+        self.assertEqual(log.cause, enums.Cause.OLD_AGE)
         self.assertEqual(log.note, 'test note')

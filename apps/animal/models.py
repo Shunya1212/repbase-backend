@@ -2,33 +2,19 @@ from decimal import Decimal
 from django.db import models
 from framework.models import BaseModel, BaseModelQuerySet
 from apps.specie.models import Specie
+from apps.common import enums
 
-class Animal(BaseModel):
-    class Sex(models.TextChoices):
-        MALE = 'male', 'Male'
-        FEMALE = 'female', 'Female'
-    
-    class Origin(models.TextChoices):
-        WILD = 'wild', 'Wild'
-        CAPITIVE = 'captive', 'Captive'
-
-    class Status(models.TextChoices):
-        KEEP = 'keep', 'Keep'
-        BREED = 'breed', 'Breed'
-        SELL = 'sell', 'Sell'
-        SOLD = 'sold', 'Sold'
-        DEAD = 'dead', 'Dead'
-
+class Animal(BaseModel):    
     code = models.CharField(max_length=512, help_text='animal code')
     specie = models.ForeignKey(Specie, null=True, blank=True, on_delete=models.CASCADE, related_name='animals')
-    sex = models.CharField(choices=Sex.choices, null=True, blank=True, help_text='animal sex')
+    sex = models.CharField(choices=enums.Sex.choices, null=True, blank=True, help_text='animal sex')
     hatch_date = models.DateField(null=True, blank=True, help_text='hacth date')
     acquisition_date = models.DateField(null=True, blank=True, help_text='date that coming to hand')
-    origin = models.CharField(choices=Origin.choices, default=Origin.CAPITIVE, help_text='hatch place')
+    origin = models.CharField(choices=enums.Origin.choices, default=enums.Origin.CAPITIVE, help_text='hatch place')
     egg = models.ForeignKey('breeding.EggBatch', null=True, blank=True, on_delete=models.CASCADE, related_name='animals')
     individual_feeding_plans = models.ManyToManyField('feeding.FeedingPlan', blank=True, related_name='individual_animals')
     genetic_value_note = models.TextField(null=True, blank=True, help_text='note for genetic information')
-    status = models.CharField(choices=Status.choices, null=True, blank=True, default=Status.KEEP, help_text='keep status')
+    status = models.CharField(choices=enums.Status.choices, default=enums.Status.KEEP, help_text='keep status')
     is_assist_feed_needed = models.BooleanField(default=False, null=True, blank=True, help_text='if assit feeding is needed')
     note = models.TextField(null=True, blank=True, help_text='note')
 
@@ -125,16 +111,11 @@ class SizeLogTransaction(BaseModel):
 
 
 class FeedingLogTransaction(BaseModel):
-    class FeedingType(models.TextChoices):
-        FREE_FEED = 'free_feed', 'Free Feed'
-        HAND_FEED = 'hand_feed', 'Hand Feed'
-        FORCE_FEED = 'force_feed', 'Force Feed'
-
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='feeding_logs')
     food = models.ForeignKey('feeding.Food', on_delete=models.CASCADE, related_name='feeding_logs')
     amount = models.PositiveIntegerField(default=1, help_text='food amount')
     date = models.DateField(help_text='measurement date')
-    feeding_type = models.CharField(null=True, blank=True, choices=FeedingType.choices, default=FeedingType.FREE_FEED, help_text='feeding type')
+    feeding_type = models.CharField(choices=enums.FeedingType.choices, default=enums.FeedingType.FREE_FEED, help_text='feeding type')
     note = models.TextField(null=True, blank=True, help_text='note')
 
     def __str__(self):
@@ -150,15 +131,9 @@ class FeedingLogTransaction(BaseModel):
         verbose_name_plural = 'Feeding Log Transactions'
 
 class FeedingResultLogTransaction(BaseModel):
-    class Result(models.TextChoices):
-        SUCCESS = 'success', 'Success'
-        REFUSED = 'refuse', 'Refuse'
-        PARTIAL = 'partial', 'Partial'
-        REGURGITATION = 'regurgitation', 'regurgitation'
-
     transaction = models.ForeignKey(FeedingLogTransaction, on_delete=models.CASCADE, related_name='results')
     date = models.DateField(help_text='result marked date')
-    result = models.CharField(choices=Result.choices, help_text='feeding result')
+    result = models.CharField(choices=enums.Result.choices, help_text='feeding result')
     note = models.TextField(null=True, blank=True, help_text='note')
 
     # if regurgitation is happend....
@@ -173,16 +148,9 @@ class FeedingResultLogTransaction(BaseModel):
 
 
 class DeadLogTransaction(BaseModel):
-    class Cause(models.TextChoices):
-        DISEASE = 'disease', 'Disease'
-        ACCIDENT = 'accident', 'Accident'
-        OLD_AGE = 'old_age', 'Old age'
-        REPRODUCTIVE = 'reproductive', 'Reproductive issue'
-        UNKNOWN = 'unknown', 'Unknown'
-
     animal = models.OneToOneField(Animal, on_delete=models.CASCADE, related_name='dead_log_transaction', help_text='detail of death')
     date = models.DateField(help_text='dead date')
-    cause = models.CharField(null=True, blank=True, choices=Cause.choices, default=Cause.UNKNOWN, help_text='dead cause')
+    cause = models.CharField(choices=enums.Cause.choices, default=enums.Cause.UNKNOWN, help_text='dead cause')
     note = models.TextField(null=True, blank=True, help_text='note')
 
     def __str__(self):

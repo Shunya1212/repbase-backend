@@ -5,6 +5,7 @@ from framework.tests import BaseTestCase
 from apps.breeding import factories, models
 from apps.users.factories import UserFactory
 from apps.animal.models import Animal
+from apps.common import enums
 
 
 class BreedingTestCase(BaseTestCase):
@@ -31,14 +32,14 @@ class BreedingTestCase(BaseTestCase):
         self.assertEqual(response.data['id'], str(pair.id))
 
     def test_create_breeding_pair_should_success(self):
-        male = factories.AnimalFactory(sex=Animal.Sex.MALE)
-        female = factories.AnimalFactory(sex=Animal.Sex.FEMALE)
+        male = factories.AnimalFactory(sex=enums.Sex.MALE)
+        female = factories.AnimalFactory(sex=enums.Sex.FEMALE)
         response = self.client.post(reverse('breedingpair-list'), data={
             'code': 'test_code_001',
             'male': male.id,
             'female': female.id,
             'paring_date': '2025-09-09',
-            'status': models.BreedingPair.BreedingResult.IN_PROGRESS,
+            'status': enums.BreedingResult.IN_PROGRESS,
             'note': 'test note',
         })
 
@@ -49,18 +50,18 @@ class BreedingTestCase(BaseTestCase):
         self.assertEqual(pair.male, male)
         self.assertEqual(pair.female, female)
         self.assertEqual(str(pair.paring_date), '2025-09-09')
-        self.assertEqual(pair.status, models.BreedingPair.BreedingResult.IN_PROGRESS)
+        self.assertEqual(pair.status, enums.BreedingResult.IN_PROGRESS)
         self.assertEqual(pair.note, 'test note')
 
     def test_create_breeding_pair_with_both_male_should_return_error(self):
-        male = factories.AnimalFactory(sex=Animal.Sex.MALE)
-        male_2 = factories.AnimalFactory(sex=Animal.Sex.MALE)
+        male = factories.AnimalFactory(sex=enums.Sex.MALE)
+        male_2 = factories.AnimalFactory(sex=enums.Sex.MALE)
         response = self.client.post(reverse('breedingpair-list'), data={
             'code': 'test_code_001',
             'male': male.id,
             'female': male_2.id,
             'paring_date': '2025-09-09',
-            'status': models.BreedingPair.BreedingResult.IN_PROGRESS,
+            'status': enums.BreedingResult.IN_PROGRESS,
             'note': 'test note',
         })
 
@@ -68,14 +69,14 @@ class BreedingTestCase(BaseTestCase):
 
     def test_update_breeding_pair_should_success(self):
         pair = factories.BreedingPairFactory()
-        male = factories.AnimalFactory(sex=Animal.Sex.MALE)
-        female = factories.AnimalFactory(sex=Animal.Sex.FEMALE)
+        male = factories.AnimalFactory(sex=enums.Sex.MALE)
+        female = factories.AnimalFactory(sex=enums.Sex.FEMALE)
         response = self.client.patch(reverse('breedingpair-detail', kwargs={'pk': pair.id}), data={
             'code': 'test_code_001',
             'male': male.id,
             'female': female.id,
             'paring_date': '2025-09-09',
-            'status': models.BreedingPair.BreedingResult.IN_PROGRESS,
+            'status': enums.BreedingResult.IN_PROGRESS,
             'note': 'test note',
         })
 
@@ -85,7 +86,7 @@ class BreedingTestCase(BaseTestCase):
         self.assertEqual(pair.male, male)
         self.assertEqual(pair.female, female)
         self.assertEqual(str(pair.paring_date), '2025-09-09')
-        self.assertEqual(pair.status, models.BreedingPair.BreedingResult.IN_PROGRESS)
+        self.assertEqual(pair.status, enums.BreedingResult.IN_PROGRESS)
         self.assertEqual(pair.note, 'test note')
 
     def test_delete_breeding_pair_should_success(self):

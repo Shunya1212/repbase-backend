@@ -6,6 +6,7 @@ from apps.animal import models, factories
 from apps.specie.factories import SpecieFactory
 from apps.breeding.factories import BreedingPairFactory, EggBatchFactory
 from apps.users.factories import UserFactory
+from apps.common import enums
 
 
 class AnimalTestCase(BaseTestCase):
@@ -41,13 +42,13 @@ class AnimalTestCase(BaseTestCase):
         response = self.client.post(reverse('animal-list'), data={
             'code': 'test_code',
             'specie': specie.id,
-            'sex': models.Animal.Sex.MALE,
+            'sex': enums.Sex.MALE,
             'hatch_date': '2025-09-09',
             'acquisition_date': '2022-09-09',
-            'origin': models.Animal.Origin.CAPITIVE,
+            'origin': enums.Origin.CAPITIVE,
             'egg': egg_batch.id,
             'genetic_value_note': 'test genetic note',
-            'status': models.Animal.Status.KEEP,
+            'status': enums.Status.KEEP,
             'is_assist_feed_needed': False,
             'note': 'test note',
         })
@@ -72,9 +73,9 @@ class AnimalTestCase(BaseTestCase):
 
         response = self.client.patch(reverse('animal-detail', kwargs={'pk': animal.id}), data={
             'code': 'test_code',
-            'sex': models.Animal.Sex.MALE,
+            'sex': enums.Sex.MALE,
             'genetic_value_note': 'test genetic note',
-            'status': models.Animal.Status.KEEP,
+            'status': enums.Status.KEEP,
             'is_assist_feed_needed': False,
             'note': 'test note',
         })

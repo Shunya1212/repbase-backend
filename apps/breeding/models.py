@@ -1,19 +1,15 @@
 from django.db import models
 from framework.models import BaseModel, BaseModelQuerySet
 from apps.animal.models import Animal
+from apps.common import enums
 
 
-class BreedingPair(BaseModel):
-    class BreedingResult(models.TextChoices):
-        SUCCESS = 'success', 'Success'
-        IN_PROGRESS = 'in_progress', 'In Progress'
-        FAIL = 'fail', 'Fail'
-        
+class BreedingPair(BaseModel):        
     code = models.CharField(max_length=256, unique=True)
     male = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='male_breeding_pairs')
     female = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='female_breeding_pairs')
     paring_date = models.DateField(help_text='paring date')
-    status = models.CharField(choices=BreedingResult.choices, default=BreedingResult.IN_PROGRESS, help_text='result of breeding')
+    status = models.CharField(choices=enums.BreedingResult.choices, default=enums.BreedingResult.IN_PROGRESS, help_text='result of breeding')
     note = models.TextField(null=True, blank=True, help_text='note')
 
     def __str__(self):

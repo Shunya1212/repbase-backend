@@ -2,25 +2,13 @@ from django.db import models
 from framework.models import BaseModel, BaseModelQuerySet
 from apps.specie.models import Specie
 from apps.animal.models import Animal
+from apps.common import enums
 
 
 class Food(BaseModel):
-    class Type(models.TextChoices):
-        LIVING_ANIMAL = 'living_animal', 'Living Animal'
-        FROZEN_ANIMAL = 'frozen animal', 'Frozen Animal'
-        VEGITABLE = 'vegitable', 'Vegitable'
-        INSECT = 'insect', 'Insect'
-        FISH = 'fish', 'Fish'
-        OTHER = 'other', 'Other'
-
-    class Unit(models.TextChoices):
-        ITEM = 'item', 'Item'
-        KILOGRAM = 'kilogram', 'kg'
-        GRAM = 'gram', 'g'
-
     name = models.CharField(max_length=256, help_text='food')
-    type = models.CharField(choices=Type.choices, default=Type.OTHER, help_text='food type')
-    unit = models.CharField(choices=Unit.choices, default=Unit.ITEM, help_text='food amount unit')
+    type = models.CharField(choices=enums.Type.choices, default=enums.Type.OTHER, help_text='food type')
+    unit = models.CharField(choices=enums.Unit.choices, default=enums.Unit.ITEM, help_text='food amount unit')
 
     def __str__(self):
         return f"{self.name}"
