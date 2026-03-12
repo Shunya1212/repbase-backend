@@ -27,11 +27,15 @@ class Animal(BaseModel):
 
     @property
     def father(self):
-        pass
+        if self.egg:
+            return self.egg.breeding_pair.male
+        return None
 
     @property
     def mother(self):
-        pass
+        if self.egg:
+            return self.egg.breeding_pair.female
+        return None
     
     @property
     def reproductive_availability(self):
