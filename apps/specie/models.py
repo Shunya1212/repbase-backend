@@ -1,19 +1,12 @@
 from django.db import models
 from framework.models import BaseModel, BaseModelQuerySet
-# from apps.feeding.models import FeedingPlan
-
-
-# class FamilyGroup(models.TextChoices):
+from apps.common import enums
 
 
 class Specie(BaseModel):
-    class Criteria(models.TextChoices):
-        WEIGHT = 'weight', 'Weight'
-        AGE = 'age', 'Age'
-
     name = models.CharField(max_length=256, help_text='name of specie')
     specific_name = models.CharField(max_length=256, null=True, blank=True, help_text='specific name of specie')
-    criteria = models.CharField(null=True, blank=True, choices=Criteria.choices, default=Criteria.WEIGHT, help_text='criteria for growth state')
+    criteria = models.CharField(choices=enums.Criteria.choices, default=enums.Criteria.WEIGHT, help_text='criteria for growth state')
     feeding_plans = models.ManyToManyField('feeding.FeedingPlan', blank=True, related_name='species')
     note = models.TextField(null=True, blank=True, help_text='note')
 
@@ -42,6 +35,7 @@ class GrowthState(BaseModel):
 
 class SpecieGrowthStateRule(BaseModel):
     specie = models.ForeignKey(Specie, on_delete=models.CASCADE, related_name='growth_state_rules')
+    sex = models.CharField(choices=enums.Sex.choices, null=True, blank=True, help_text='sex')
     growth_state = models.ForeignKey(GrowthState, on_delete=models.CASCADE, related_name='specie_growth_states')
     index = models.PositiveIntegerField(null=True, blank=True, default=0, help_text='index of growth state')
     min_weight = models.DecimalField(max_digits=16, decimal_places=2)
@@ -64,8 +58,8 @@ class SpecieGrowthStateRule(BaseModel):
 
 class SpecieBreedingRule(BaseModel):
     specie = models.ForeignKey(Specie, on_delete=models.CASCADE, related_name='breeding_rules')
-    min_breeding_male_weight = models.DecimalField(null=True, max_digits=16, decimal_places=2, help_text='allow breeding weight for male')
-    min_breeding_female_weight = models.DecimalField(null=True, max_digits=16, decimal_places=2, help_text='allow breeding weight for female')
+    sex = models.CharField(choices=enums.Sex.choices, null=True, blank=True, help_text='sex')
+    min_breeding_weight = models.DecimalField(null=True, max_digits=16, decimal_places=2, help_text='allow breeding weight for male')
     min_breeding_age_days = models.PositiveIntegerField(null=True, blank=True)
     rest_days = models.PositiveIntegerField(null=True, blank=True)
     note = models.TextField(null=True, blank=True, help_text='note')
@@ -87,14 +81,33 @@ class SpecieBreedingRule(BaseModel):
 
 class SpecieInbreedingRule(BaseModel):
     specie = models.ForeignKey(Specie, on_delete=models.CASCADE, related_name='inbreeding_rules')
-    # max_inbreeding_level = models.
-    allow_line_breeding = models.BooleanField(null=True, blank=True, default=False)
-    # warning_inbreeding_level = models.
-    # block_inbreeding_level = models.
+    sex = models.CharField(choices=enums.Sex.choices, null=True, blank=True, help_text='sex')
+    max_allowed_level = models.IntegerField(
+        choices=enums.InbreedingLevel.choices,
+        default=enums.InbreedingLevel.COUSIN,
+        help_text="Maximum allowed inbreeding level"
+    )
+    warning_level = models.IntegerField(
+        choices=enums.InbreedingLevel.choices,
+        null=True,
+        blank=True,
+        help_text="Warning threshold level"
+    )
     note = models.TextField(null=True, blank=True, help_text='note')
 
     def __str__(self):
         return f"{self.specie} - inbreeding rule"
+    
+    def convert_F_to_level(F):
+        if F >= 0.25:
+            return 4
+        elif F >= 0.125:
+            return 3
+        elif F >= 0.0625:
+            return 2
+        elif F > 0:
+            return 1
+        return 0
     
     class Meta:
         ordering = ['-created', '-updated']

@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from framework.tests import BaseTestCase
 from apps.specie import models, factories
 from apps.users.factories import UserFactory
+from apps.common import enums
 
 
 class SpecieTestCase(BaseTestCase):
@@ -33,7 +34,7 @@ class SpecieTestCase(BaseTestCase):
         response = self.client.post(reverse('specie-list'), data={
             'name': 'ball python',
             'specific_name': 'ball python specie',
-            'criteria': models.Specie.Criteria.WEIGHT,
+            'criteria': enums.Criteria.WEIGHT,
             'note': 'test note'
         })
 
@@ -42,7 +43,7 @@ class SpecieTestCase(BaseTestCase):
         specie = models.Specie.objects.get(id=created_id)
         self.assertEqual(specie.name, 'ball python')
         self.assertEqual(specie.specific_name, 'ball python specie')
-        self.assertEqual(specie.criteria, models.Specie.Criteria.WEIGHT)
+        self.assertEqual(specie.criteria, enums.Criteria.WEIGHT)
         self.assertEqual(specie.note, 'test note')
 
     def test_update_specie_should_success(self):
@@ -51,7 +52,7 @@ class SpecieTestCase(BaseTestCase):
         response = self.client.patch(reverse('specie-detail', kwargs={'pk': specie.id}), data={
             'name': 'ball python',
             'specific_name': 'ball python specie',
-            'criteria': models.Specie.Criteria.WEIGHT,
+            'criteria': enums.Criteria.WEIGHT,
             'note': 'test note'
         })
 
@@ -59,7 +60,7 @@ class SpecieTestCase(BaseTestCase):
         specie.refresh_from_db()
         self.assertEqual(specie.name, 'ball python')
         self.assertEqual(specie.specific_name, 'ball python specie')
-        self.assertEqual(specie.criteria, models.Specie.Criteria.WEIGHT)
+        self.assertEqual(specie.criteria, enums.Criteria.WEIGHT)
         self.assertEqual(specie.note, 'test note')
     
     def test_delete_specie_should_success(self):
