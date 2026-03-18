@@ -17,11 +17,11 @@ class BaseModelQuerySet(models.QuerySet):
 
 class BaseModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created = models.DateTimeField(default=timezone.now, editable=False, help_text='วัน-เวลาสร้าง')
-    updated = models.DateTimeField(auto_now=True, help_text='วัน-เวลาแก้ไขล่าสุด')
+    created = models.DateTimeField(default=timezone.now, editable=False, help_text='Date and time of creation')
+    updated = models.DateTimeField(auto_now=True, help_text='Date and time of last update')
     created_by = CurrentUserField(related_name='+')
     updated_by = CurrentUserField(related_name='+', on_update=True)
-    is_active = models.BooleanField(default=True, help_text='เปิดใช้งานอยู่หรือไม่?')
+    is_active = models.BooleanField(default=True, help_text='activate or deactivate this record')
     objects = BaseModelQuerySet.as_manager()
 
     def delete(self, *args, **kwargs):
