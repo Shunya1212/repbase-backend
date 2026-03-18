@@ -1,14 +1,22 @@
-from rest_framework import status, views, generics
+from rest_framework import status, views, generics, viewsets
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework.response import Response
-from django.contrib.auth import logout, get_user_model
-from django.http import HttpResponse
+from django.contrib.auth import get_user_model
 from apps.users.serializers import CustomAuthTokenSerializer, UserSerializer, ChangePasswordSerializer
+from django.db.models import Count
 
 
 User = get_user_model()
+
+
+class UserViewset(viewsets.ModelViewSet):
+    queryset = User.objects.actives().annotate(num_groups=Count('groups'))\
+        .filter(num_groups__gt=0)\
+        .order_by("-created")
+    serializer_class = UserSerializer
+    # filterset_class = UserFilter
 
 
 class CustomObtainJSONWebToken(ObtainAuthToken):
@@ -27,9 +35,11 @@ class CustomObtainJSONWebToken(ObtainAuthToken):
 
 
 class SignOut(views.APIView):
-    def get(self, request, *args, **kwargs):
-        logout(request)
-        return HttpResponse(status=200)
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            request.user.auth_token.delete()
+        return Response(status=200)
+
 
 class ChangePassword(generics.GenericAPIView):
     serializer_class = ChangePasswordSerializer
