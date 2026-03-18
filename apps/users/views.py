@@ -4,10 +4,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import logout, get_user_model
-# from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from apps.users.serializers import CustomAuthTokenSerializer, UserSerializer, ChangePasswordSerializer
-# from fcm_django.models import FCMDevice
+
 
 User = get_user_model()
 
@@ -31,26 +30,6 @@ class SignOut(views.APIView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return HttpResponse(status=200)
-
-
-# class RegisterNotificationTokenView(views.APIView):
-#     def post(self, request, *args, **kwargs):
-#         token = request.data.get('notification_token', None)
-#         if not token:
-#             raise ValidationError('Missing token parameter')
-
-#         fcm_device = FCMDevice.objects.filter(user=request.user).first()
-#         if fcm_device:  # Update token
-#             fcm_device.registration_id = token
-#             fcm_device.save()
-#         else:
-#             FCMDevice.objects.create(
-#                 user=request.user,
-#                 registration_id=token
-#             )
-
-#         return Response(status=status.HTTP_200_OK, data={'detail': 'success'})
-
 
 class ChangePassword(generics.GenericAPIView):
     serializer_class = ChangePasswordSerializer
