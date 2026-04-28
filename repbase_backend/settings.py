@@ -99,10 +99,10 @@ WSGI_APPLICATION = 'repbase_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'repbase_db',
-        'USER': 'repbase_admin',
+        'NAME': 'repbase',
+        'USER': 'admin',
         'PASSWORD': '1234',
-        'HOST': 'localhost',
+        'HOST': 'repbase-db',
         'PORT': '5432',
     }
 }
